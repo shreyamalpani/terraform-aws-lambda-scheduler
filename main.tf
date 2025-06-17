@@ -129,8 +129,17 @@ resource "aws_lambda_function" "scheduler_lambda" {
       TIME               = var.time
       RDS_SCHEDULE       = var.rds_schedule
       EC2_SCHEDULE       = var.ec2_schedule
+      DD_API_KEY_SECRET_ARN = "<DATADOG_API_KEY_SECRET_ARN>"
+      DD_ENV             = "<ENVIRONMENT>"
+      DD_SERVICE         = "<SERVICE_NAME>"
+      DD_SITE            = "<DATADOG_SITE>"
+      DD_VERSION         = "<VERSION>"
     }
   }
+  layers = [
+    "arn:aws:lambda:<AWS_REGION>:464622532012:layer:Datadog-Python37:110",
+    "arn:aws:lambda:<AWS_REGION>:464622532012:layer:Datadog-Extension:81"
+  ]
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_call_scheduler" {
@@ -140,3 +149,4 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_scheduler" {
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.check-scheduler-event.arn
 }
+
