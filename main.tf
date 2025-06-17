@@ -32,7 +32,6 @@ resource "aws_iam_role" "scheduler_lambda" {
   ]
 }
 EOF
-
 }
 
 data "aws_iam_policy_document" "ec2-access-scheduler" {
@@ -92,7 +91,6 @@ resource "aws_iam_policy" "scheduler_aws_lambda_basic_execution_role" {
     ]
 }
 EOF
-
 }
 
 resource "aws_iam_role_policy_attachment" "basic-exec-role" {
@@ -129,8 +127,17 @@ resource "aws_lambda_function" "scheduler_lambda" {
       TIME               = var.time
       RDS_SCHEDULE       = var.rds_schedule
       EC2_SCHEDULE       = var.ec2_schedule
+      DD_API_KEY_SECRET_ARN = "<DATADOG_API_KEY_SECRET_ARN>"
+      DD_ENV = "<ENVIRONMENT>"
+      DD_SERVICE = "<SERVICE_NAME>"
+      DD_SITE = "<DATADOG_SITE>"
+      DD_VERSION = "<VERSION>"
     }
   }
+  layers = [
+    "arn:aws:lambda:<AWS_REGION>:464622532012:layer:Datadog-Extension:81",
+    "arn:aws:lambda:<AWS_REGION>:464622532012:layer:Datadog-Python:110"
+  ]
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_call_scheduler" {
